@@ -4,6 +4,7 @@
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
 
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
+#include "oatpp/network/Server.hpp"
 
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
 
@@ -36,6 +37,15 @@ public:
   OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ConnectionHandler>, serverConnectionHandler)([] {
     OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>, router); // get Router component
     return oatpp::web::server::HttpConnectionHandler::createShared(router);
+  }());
+
+  /**
+   * My Server Component
+   */
+  OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::Server>, server)([] {
+    OATPP_COMPONENT(std::shared_ptr<oatpp::network::ConnectionHandler>, connectionHandler);
+    OATPP_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, connectionProvider);
+    return std::make_shared<oatpp::network::Server>(connectionProvider, connectionHandler);
   }());
   
   /**
